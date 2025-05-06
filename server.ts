@@ -5,6 +5,7 @@ type Task = {
   created_at?: string;
   title: string;
   description: string;
+  status: string;
   updated_at?: string;
   userId?: string;
 };

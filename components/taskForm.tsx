@@ -1,25 +1,17 @@
 import { useState } from "react";
 import { createTask } from "@/server";
-import Button from "./button";
+import { Status, Task } from "@/types";
 
 type Props = {
-  formTitle: string;
-  task?: {};
+  formTitle?: string;
+  task?: Task;
   isEditing?: boolean;
   handleTaskForm: () => void;
 };
 
-interface Task {
-  title: string;
-  description: string;
-  status: TaskStatus;
-}
-
-type TaskStatus = "Open" | "In Progress" | "Completed";
-
 const TaskForm = (props: Props) => {
   const { formTitle, isEditing, handleTaskForm } = props;
-  const [formValues, setFormValues] = useState({
+  const [formValues, setFormValues] = useState<Task>({
     title: "",
     description: "",
     status: "Open",
@@ -41,7 +33,13 @@ const TaskForm = (props: Props) => {
       console.log("editing form");
     }
     console.log("submitting form");
-    await createTask(formValues);
+    if (formValues.title) {
+      await createTask({
+        title: formValues.title,
+        description: formValues.description,
+        status: formValues.status,
+      });
+    }
     setFormValues({
       title: "",
       description: "",
@@ -52,7 +50,7 @@ const TaskForm = (props: Props) => {
   };
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-2">{formTitle}</h2>
+      <h2 className="text-2xl font-bold mb-2">{formTitle || ""}</h2>
       <form
         id="taskForm"
         name="taskForm"
@@ -75,13 +73,14 @@ const TaskForm = (props: Props) => {
           placeholder="Description"
         />
         <select
-          defaultValue={"Status"}
+          name="status" // Add this
+          value={formValues.status}
           onChange={handleChange}
           className="border-1 rounded p-1"
         >
-          <option value={"Open"}>Open</option>
-          <option value={"In Progress"}>In Progress</option>
-          <option value={"Closed"}>Closed</option>
+          <option value="Open">Open</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Closed">Closed</option>
         </select>
         <div className="flex gap-4 w-96 mt-4">
           <button
