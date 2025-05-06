@@ -41,7 +41,7 @@ const CardForm = ({
           >
             <option value="Open">Open</option>
             <option value="In Progress">In Progress</option>
-            <option value="Completed">Completed</option>
+            <option value="Closed">Closed</option>
           </select>
         </div>
         <textarea

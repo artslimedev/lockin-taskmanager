@@ -85,3 +85,21 @@ export const editTask = async (
     return { data: null, error };
   }
 };
+
+export const deleteTask = async (
+  id: number | undefined
+): Promise<{
+  data: Task | null;
+  error: Error | null;
+}> => {
+  const { data, error } = await supabase.from("tasks").delete().eq("id", id);
+
+  if (error) {
+    console.error("Error fetching tasks:", error);
+    return { data: null, error };
+  }
+
+  console.log("Fetched tasks:", data);
+
+  return { data, error: null };
+};

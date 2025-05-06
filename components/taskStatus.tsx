@@ -10,10 +10,10 @@ const TaskStatus = (props: Props) => {
 
   const statusStyle =
     status === "Open"
-      ? "bg-red-800 text-white"
+      ? "bg-red-700 text-white"
       : status === "In Progress"
-      ? "bg-fuchsia-900 text-white"
-      : "bg-green-700 text-white";
+      ? "bg-fuchsia-700 text-white"
+      : "bg-green-600 text-white";
   return (
     <span
       className={`inline-flex items-center min-w-[70px] justify-center gap-1 h-fit rounded-full border-transparent px-2 py-[2px] text-[10px] font-medium border  ${statusStyle} `}

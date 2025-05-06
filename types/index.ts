@@ -1,4 +1,4 @@
-export type Status = "Open" | "In Progress" | "Completed" | "";
+export type Status = "Open" | "In Progress" | "Closed" | "";
 
 export interface Task {
   id?: number;

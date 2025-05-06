@@ -1,16 +1,18 @@
 import React, { useState } from "react";
 import TaskStatus from "./taskStatus";
 import Button from "./button";
-import { editTask } from "@/server";
+import { deleteTask, editTask } from "@/server";
 import type { Task } from "@/types";
 import CardForm from "./cardForm";
 
 type Props = {
   task: Task;
   handleTask: () => void;
+  handleFetch: () => void;
 };
 
-const Task = ({ task, handleTask }: Props) => {
+const Task = ({ task, handleTask, handleFetch }: Props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [editCard, setEditCard] = useState(false);
   const [editedTask, setEditedTask] = useState<Task>({
     title: task.title,
@@ -66,6 +68,21 @@ const Task = ({ task, handleTask }: Props) => {
     }
   };
 
+  const handleDelete = async () => {
+    try {
+      setIsLoading(!isLoading);
+      const res = await deleteTask(task.id);
+      setIsLoading(!isLoading);
+      if (!res.error) {
+        await handleFetch();
+      } else {
+        console.log(res.error);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className={`flex h-50 w-full bg-blue-200 ${
@@ -79,11 +96,19 @@ const Task = ({ task, handleTask }: Props) => {
             <TaskStatus status={editedTask.status} />
           </div>
           <p>{editedTask.description}</p>
-          <Button
-            name="Edit"
-            onClick={toggleEdit}
-            className="px-2 py-2 min-w-[72px] w-1/4 bg-blue-500 hover:bg-blue-600 text-white rounded"
-          />
+          <div className="flex w-full gap-x-2">
+            <Button
+              name="Edit"
+              onClick={toggleEdit}
+              className="px-2 py-2 min-w-[72px] w-1/4 bg-blue-500 hover:bg-blue-600 text-white rounded"
+            />
+            <Button
+              name="Delete"
+              onClick={handleDelete}
+              className="flex justify-center items-center px-2 py-2 min-w-[72px] w-1/4 bg-red-700 hover:bg-red-800 text-white rounded"
+              loading={isLoading}
+            />
+          </div>
         </div>
       ) : (
         <CardForm

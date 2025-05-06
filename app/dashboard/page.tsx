@@ -9,7 +9,7 @@ import { Task } from "@/types";
 const statusOrder = {
   Open: 0,
   "In Progress": 1,
-  Completed: 2,
+  Closed: 2,
 };
 
 const Dashboard = () => {
@@ -43,7 +43,7 @@ const Dashboard = () => {
   }, [taskForm, isEditing]);
 
   return (
-    <div className="flex flex-col h-full py-8 px-2 sm:px-4">
+    <div className="flex flex-col h-full my-6 px-2 sm:px-4 min-w-[280px]">
       <h1 className="text-4xl mb-5">Dashboard</h1>
       <div className="flex gap-4 mb-10">
         {!taskForm && <Button onClick={handleFetch} name="Fetch Tasks" />}
@@ -61,25 +61,35 @@ const Dashboard = () => {
               </p>
             </div>
           ) : (
-            <ul className="flex flex-wrap gap-2 sm:gap-4 justify-start w-full">
+            <ul className="flex flex-wrap gap-2 sm:gap-4 justify-start w-full px-0">
               {[...tasks]
                 .sort((a, b) => {
+                  // First sort by status order
                   const statusDiff =
                     statusOrder[a.status as keyof typeof statusOrder] -
                     statusOrder[b.status as keyof typeof statusOrder];
 
-                  return (
-                    statusDiff ||
-                    b.created_at?.localeCompare(a.created_at || "") ||
-                    0
-                  );
+                  // If status is the same (statusDiff === 0), sort by updated_at
+                  if (statusDiff === 0) {
+                    // Compare updated_at dates, most recent first
+                    return (b.updated_at || "").localeCompare(
+                      a.updated_at || ""
+                    );
+                  }
+
+                  // Otherwise return the status difference
+                  return statusDiff;
                 })
                 .map((task) => (
                   <li
                     key={task.id}
-                    className="w-[calc(100%-1rem)] sm:w-auto sm:flex-[1_1_288px] sm:min-w-[288px] sm:max-w-[320px]"
+                    className="w-full sm:w-auto sm:flex-[1_1_288px] min-w-[255px] sm:min-w-[288px] sm:max-w-[320px]"
                   >
-                    <TaskComponent task={task} handleTask={handleTask} />
+                    <TaskComponent
+                      task={task}
+                      handleTask={handleTask}
+                      handleFetch={handleFetch}
+                    />
                   </li>
                 ))}
             </ul>

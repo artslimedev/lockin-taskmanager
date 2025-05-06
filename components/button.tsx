@@ -1,14 +1,16 @@
 "use client";
 import React from "react";
+import { AiOutlineLoading } from "react-icons/ai";
 
 type Props = {
   onClick: () => void;
   type?: "button" | "submit" | "reset" | undefined;
   name: string;
   className?: string;
+  loading?: boolean;
 };
 
-const Button = ({ onClick, type, name, className }: Props) => {
+const Button = ({ onClick, type, name, className, loading }: Props) => {
   const handleClick = () => {
     onClick();
   };
@@ -22,7 +24,11 @@ const Button = ({ onClick, type, name, className }: Props) => {
         "px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
       }`}
     >
-      {name}
+      {loading ? (
+        <AiOutlineLoading className="animate-spin text-amber-50" />
+      ) : (
+        name
+      )}
     </button>
   );
 };
