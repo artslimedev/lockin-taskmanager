@@ -68,9 +68,9 @@ const Task = ({ task, handleTask }: Props) => {
 
   return (
     <div
-      className={`flex h-50 w-full grow bg-blue-200 ${
+      className={`flex h-50 w-full bg-blue-200 ${
         !editCard && "hover:bg-blue-400"
-      } p-4 rounded-md`}
+      } p-2 sm:p-4 rounded-md`}
     >
       {!editCard ? (
         <div className="flex flex-col w-full justify-between">

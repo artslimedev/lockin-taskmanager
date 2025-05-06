@@ -35,16 +35,15 @@ const Dashboard = () => {
 
   const handleTask = async () => {
     setIsEditing(!isEditing);
-    await handleFetch(); // Refresh tasks after edit
+    await handleFetch();
   };
 
-  // Fetch tasks on mount and when taskForm or isEditing changes
   useEffect(() => {
     handleFetch();
   }, [taskForm, isEditing]);
 
   return (
-    <div className="flex flex-col h-full py-8 px-4">
+    <div className="flex flex-col h-full py-8 px-2 sm:px-4">
       <h1 className="text-4xl mb-5">Dashboard</h1>
       <div className="flex gap-4 mb-10">
         {!taskForm && <Button onClick={handleFetch} name="Fetch Tasks" />}
@@ -54,15 +53,15 @@ const Dashboard = () => {
         />
       </div>
       {!taskForm ? (
-        <div className="w-full">
+        <div className="w-full h-dvh">
           {!tasks || tasks.length === 0 ? (
-            <div className="flex justify-center items-center h-32 bg-gray-50 rounded-md">
-              <p className="text-gray-500 text-lg">
+            <div className="flex justify-center items-center h-full rounded-md">
+              <p className="text-gray-500 text-4xl font-bold">
                 No tasks available. Create one!
               </p>
             </div>
           ) : (
-            <ul className="flex flex-wrap gap-4 justify-start">
+            <ul className="flex flex-wrap gap-2 sm:gap-4 justify-start w-full">
               {[...tasks]
                 .sort((a, b) => {
                   const statusDiff =
@@ -78,7 +77,7 @@ const Dashboard = () => {
                 .map((task) => (
                   <li
                     key={task.id}
-                    className="flex-[1_1_280px] min-w-[280px] max-w-[320px]"
+                    className="w-[calc(100%-1rem)] sm:w-auto sm:flex-[1_1_288px] sm:min-w-[288px] sm:max-w-[320px]"
                   >
                     <TaskComponent task={task} handleTask={handleTask} />
                   </li>
