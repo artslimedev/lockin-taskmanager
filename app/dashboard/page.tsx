@@ -6,6 +6,12 @@ import { getTasks } from "@/server";
 import { useState, useEffect } from "react";
 import { Task } from "@/types";
 
+const statusOrder = {
+  Open: 0,
+  "In Progress": 1,
+  Completed: 2,
+};
+
 const Dashboard = () => {
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [taskForm, setTaskForm] = useState(false);
@@ -49,16 +55,36 @@ const Dashboard = () => {
       </div>
       {!taskForm ? (
         <div className="w-full">
-          <ul className="flex flex-wrap gap-4 justify-start">
-            {tasks?.map((task) => (
-              <li
-                key={task.id}
-                className="flex-[1_1_280px] min-w-[280px] max-w-[320px]"
-              >
-                <TaskComponent task={task} handleTask={handleTask} />
-              </li>
-            ))}
-          </ul>
+          {!tasks || tasks.length === 0 ? (
+            <div className="flex justify-center items-center h-32 bg-gray-50 rounded-md">
+              <p className="text-gray-500 text-lg">
+                No tasks available. Create one!
+              </p>
+            </div>
+          ) : (
+            <ul className="flex flex-wrap gap-4 justify-start">
+              {[...tasks]
+                .sort((a, b) => {
+                  const statusDiff =
+                    statusOrder[a.status as keyof typeof statusOrder] -
+                    statusOrder[b.status as keyof typeof statusOrder];
+
+                  return (
+                    statusDiff ||
+                    b.created_at?.localeCompare(a.created_at || "") ||
+                    0
+                  );
+                })
+                .map((task) => (
+                  <li
+                    key={task.id}
+                    className="flex-[1_1_280px] min-w-[280px] max-w-[320px]"
+                  >
+                    <TaskComponent task={task} handleTask={handleTask} />
+                  </li>
+                ))}
+            </ul>
+          )}
         </div>
       ) : (
         <TaskForm formTitle="Add Task" handleTaskForm={handleTaskForm} />
