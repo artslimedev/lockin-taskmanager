@@ -21,8 +21,6 @@ export const getTasks = async (): Promise<{
     return { data: null, error };
   }
 
-  console.log("Fetched tasks:", data);
-
   return { data, error: null };
 };
 
@@ -80,7 +78,6 @@ export const editTask = async (
       return { data: null, error: new Error(error.message) };
     }
 
-    console.log("Task updated successfully:", data);
     return { data, error: null };
   } catch (err) {
     const error =
