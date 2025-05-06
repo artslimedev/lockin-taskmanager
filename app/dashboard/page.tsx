@@ -4,7 +4,6 @@ import TaskComponent from "@/components/task";
 import TaskForm from "@/components/taskForm";
 import { getTasks } from "@/server";
 import { useState, useEffect } from "react";
-
 import { Task } from "@/types";
 
 const Dashboard = () => {
@@ -14,46 +13,51 @@ const Dashboard = () => {
 
   const handleFetch = async () => {
     try {
-      const res = await getTasks();
-      setTasks(res.data as Task[]);
+      const { data, error } = await getTasks();
+      if (error) {
+        throw new Error(error.message);
+      }
+      setTasks(data as Task[]);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
   };
 
   const handleTaskForm = () => {
-    console.log("this is running");
     setTaskForm(!taskForm);
   };
 
-  const handleTask = () => {
+  const handleTask = async () => {
     setIsEditing(!isEditing);
+    await handleFetch(); // Refresh tasks after edit
   };
 
+  // Fetch tasks on mount and when taskForm or isEditing changes
   useEffect(() => {
     handleFetch();
-  }, [taskForm]);
+  }, [taskForm, isEditing]);
 
   return (
-    <div className="flex flex-col h-full p-8">
+    <div className="flex flex-col h-full py-8 px-4">
       <h1 className="text-4xl mb-5">Dashboard</h1>
       <div className="flex gap-4 mb-10">
         {!taskForm && <Button onClick={handleFetch} name="Fetch Tasks" />}
         <Button
-          onClick={() => setTaskForm(!taskForm)}
+          onClick={handleTaskForm}
           name={!taskForm ? "Add Task" : "Cancel"}
         />
       </div>
       {!taskForm ? (
-        <div className="w-full items-center">
-          <ul className="flex gap-4 flex-wrap">
-            {tasks?.map((task: Task) => {
-              return (
-                <li key={task.id}>
-                  <TaskComponent task={task as Task} handleTask={handleTask} />
-                </li>
-              );
-            })}
+        <div className="w-full">
+          <ul className="flex flex-wrap gap-4 justify-start">
+            {tasks?.map((task) => (
+              <li
+                key={task.id}
+                className="flex-[1_1_280px] min-w-[280px] max-w-[320px]"
+              >
+                <TaskComponent task={task} handleTask={handleTask} />
+              </li>
+            ))}
           </ul>
         </div>
       ) : (

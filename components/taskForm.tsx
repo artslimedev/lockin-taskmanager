@@ -48,6 +48,7 @@ const TaskForm = (props: Props) => {
     handleTaskForm();
     console.log("success");
   };
+
   return (
     <div>
       <h2 className="text-2xl font-bold mb-2">{formTitle || ""}</h2>
@@ -66,7 +67,7 @@ const TaskForm = (props: Props) => {
           placeholder="Task Title"
         />
         <textarea
-          className="border-1 rounded p-1"
+          className="border-1 rounded p-1 h-[76px]"
           name="description"
           value={formValues.description}
           onChange={handleChange}

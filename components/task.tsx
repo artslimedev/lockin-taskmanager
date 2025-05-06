@@ -1,27 +1,24 @@
 import React, { useState } from "react";
 import TaskStatus from "./taskStatus";
 import Button from "./button";
-import { createTask } from "@/server";
+import { editTask } from "@/server";
 import type { Task } from "@/types";
-// import Link from "next/link";
+import CardForm from "./cardForm";
 
 type Props = {
   task: Task;
   handleTask: () => void;
 };
 
-const Task = (props: Props) => {
-  const { task } = props;
+const Task = ({ task, handleTask }: Props) => {
   const [editCard, setEditCard] = useState(false);
-  const [formValues, setFormValues] = useState<Task>({
-    title: "",
-    description: "",
-    status: "Open",
+  const [editedTask, setEditedTask] = useState<Task>({
+    title: task.title,
+    description: task.description,
+    status: task.status,
   });
 
-  const handleTaskForm = () => {
-    setEditCard(!editCard);
-  };
+  const toggleEdit = () => setEditCard((prev) => !prev);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -29,93 +26,73 @@ const Task = (props: Props) => {
     >
   ) => {
     const { name, value } = e.target;
-
-    setFormValues((prevState) => ({ ...prevState, [name]: value }));
+    setEditedTask((prev) => ({ ...prev, [name]: value }));
   };
+
+  const isTaskChanged = (a: Task, b: Task) =>
+    a.title !== b.title ||
+    a.description !== b.description ||
+    a.status !== b.status;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editCard) {
-      console.log("editing form");
+
+    if (isTaskChanged(editedTask, task)) {
+      try {
+        const { data, error } = await editTask({
+          ...task,
+          ...editedTask,
+        });
+
+        if (error) {
+          console.error("Error updating task:", error.message);
+          return;
+        }
+
+        if (data) {
+          setEditedTask(data as Task);
+          setEditCard(false);
+          handleTask();
+        }
+      } catch (error) {
+        console.error(
+          "Error occurred while updating task:",
+          error instanceof Error ? error.message : "Unknown error"
+        );
+      }
+    } else {
+      console.log("No changes detected, task not updated.");
+      setEditCard(false);
     }
-    console.log("submitting form");
-    if (formValues.title) {
-      await createTask({
-        title: formValues.title,
-        description: formValues.description,
-        status: formValues.status,
-      });
-    }
-    setFormValues({
-      title: "",
-      description: "",
-      status: "Open",
-    });
-    handleTaskForm();
-    console.log("success");
   };
 
   return (
     <div
-      className={`flex h-50 w-80 bg-blue-200 ${
+      className={`flex h-50 w-full grow bg-blue-200 ${
         !editCard && "hover:bg-blue-400"
       } p-4 rounded-md`}
     >
-      {/* <Link href="/task/:id"> */}
       {!editCard ? (
         <div className="flex flex-col w-full justify-between">
           <div className="flex w-full justify-between">
-            <span className="mb-2 font-bold text-lg">{task.title}</span>
-            <TaskStatus status={task.status} />
+            <span className="mb-2 font-bold text-lg">{editedTask.title}</span>
+            <TaskStatus status={editedTask.status} />
           </div>
-          <p>{task.description}</p>
-          <div>
-            <Button name="Edit" onClick={handleTaskForm} />
-          </div>
+          <p>{editedTask.description}</p>
+          <Button
+            name="Edit"
+            onClick={toggleEdit}
+            className="px-2 py-2 min-w-[72px] w-1/4 bg-blue-500 hover:bg-blue-600 text-white rounded"
+          />
         </div>
       ) : (
-        <div className="flex flex-col w-full">
-          <h3 className="font-semibold mb-1">Edit</h3>
-          <form
-            id="cardForm"
-            name="cardForm"
-            className="flex flex-col gap-2 w-full justify-between h-full"
-            onSubmit={handleSubmit}
-          >
-            <div className="flex flex-col gap-2 w-full">
-              <input
-                type="text"
-                value={formValues.title || task.title}
-                onChange={handleChange}
-                placeholder="Title"
-                className="border rounded-sm p-1 text-[12px]"
-              />
-              <textarea
-                placeholder="description"
-                value={formValues.description || task.description}
-                onChange={handleChange}
-                className="border rounded-sm p-1 text-[12px]"
-              />
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded"
-              >
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={handleTaskForm}
-                className="px-4 py-2 bg-black hover:bg-gray-500 text-white rounded"
-              >
-                Clear
-              </button>
-            </div>
-          </form>
-        </div>
+        <CardForm
+          editedTask={editedTask}
+          handleChange={handleChange}
+          handleSubmit={handleSubmit}
+          toggleEdit={toggleEdit}
+        />
       )}
-      {/* </Link> */}
     </div>
   );
 };
