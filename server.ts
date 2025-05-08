@@ -1,4 +1,5 @@
 import { supabase } from "./lib/supabase";
+import { redirect } from "next/navigation";
 
 type Task = {
   id?: number;
@@ -9,6 +10,23 @@ type Task = {
   updated_at?: string;
   userId?: string;
 };
+
+export async function signUpNewUser(userEmail: string, pw: string) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: `${userEmail}`,
+      password: `${pw}`,
+      options: {
+        emailRedirectTo: "https://localhost:3000/dashboard",
+      },
+    });
+    console.log("data", data);
+    console.log("error", error);
+    // await redirect("/dashboard");
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export const getTasks = async (): Promise<{
   data: Task[] | null;

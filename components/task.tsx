@@ -85,8 +85,8 @@ const Task = ({ task, handleTask, handleFetch }: Props) => {
 
   return (
     <div
-      className={`flex h-50 w-full bg-blue-200 ${
-        !editCard && "hover:bg-blue-400"
+      className={`flex h-50 w-full bg-[#efe6fd] ${
+        !editCard && "hover:bg-white"
       } p-2 sm:p-4 rounded-md`}
     >
       {!editCard ? (

@@ -19,12 +19,6 @@ A full-stack task management application built with **Next.js** and **Supabase**
 
 ## 📦 Getting Started
 
-### Prerequisites
-
-- Node.js (v14 or later)
-- npm or yarn
-- Supabase account
-
 ### Installation
 
 1. **Clone the repository:**

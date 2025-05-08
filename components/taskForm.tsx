@@ -50,13 +50,13 @@ const TaskForm = (props: Props) => {
   };
 
   return (
-    <div>
+    <div className="bg-[#efe6fd] hover:bg-white active:bg-white w-[400px] h-3/5 rounded p-4">
       <h2 className="text-2xl font-bold mb-2">{formTitle || ""}</h2>
       <form
         id="taskForm"
         name="taskForm"
         onSubmit={handleSubmit}
-        className="flex flex-col gap-4 w-1/3"
+        className="flex flex-col gap-4 w-full"
       >
         <input
           className="border-1 rounded p-1"

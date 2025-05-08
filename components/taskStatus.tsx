@@ -12,7 +12,7 @@ const TaskStatus = (props: Props) => {
     status === "Open"
       ? "bg-red-700 text-white"
       : status === "In Progress"
-      ? "bg-fuchsia-700 text-white"
+      ? "bg-indigo-900 text-white"
       : "bg-green-600 text-white";
   return (
     <span
