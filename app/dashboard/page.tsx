@@ -1,10 +1,10 @@
 "use client";
-import Button from "@/components/button";
-import TaskComponent from "@/components/task";
-import TaskForm from "@/components/taskForm";
-import { getTasks } from "@/server";
 import { useState, useEffect } from "react";
-import { Task } from "@/types";
+import { getSupabaseClient } from "@/lib/supabase"; // Your updated supabase client import
+import Button from "@/components/button"; // Button component
+import TaskComponent from "@/components/task"; // Task component
+import { Task } from "@/types"; // Task type
+import TaskForm from "@/components/taskForm";
 
 const statusOrder = {
   Open: 0,
@@ -17,13 +17,24 @@ const Dashboard = () => {
   const [taskForm, setTaskForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleFetch = async () => {
+  const fetchTasks = async () => {
     try {
-      const { data, error } = await getTasks();
-      if (error) {
-        throw new Error(error.message);
+      const supabase = getSupabaseClient(); // Get the Supabase client
+
+      // Check if supabase is initialized on the client side
+      if (!supabase) {
+        console.error("Supabase client is not initialized!");
+        return;
       }
-      setTasks(data as Task[]);
+
+      const { data, error } = await supabase.from("tasks").select("*"); // Fetch tasks
+
+      if (error) {
+        console.error("Error fetching tasks:", error);
+        return;
+      }
+
+      setTasks(data as Task[]); // Set tasks state with the fetched data
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -35,12 +46,12 @@ const Dashboard = () => {
 
   const handleTask = async () => {
     setIsEditing(!isEditing);
-    await handleFetch();
+    await fetchTasks(); // Refetch tasks after editing
   };
 
   useEffect(() => {
-    handleFetch();
-  }, [taskForm, isEditing]);
+    fetchTasks(); // Call fetchTasks on component mount
+  }, [taskForm, isEditing]); // Dependency array includes taskForm and isEditing
 
   return (
     <div className="flex flex-col h-[calc(100vh-48px)] py-4 px-2 sm:px-4 min-w-[280px] bg-indigo-900">
@@ -48,7 +59,7 @@ const Dashboard = () => {
       <div className="flex gap-4 mb-10">
         {!taskForm && (
           <Button
-            onClick={handleFetch}
+            onClick={fetchTasks} // Button to refetch tasks
             name="Fetch Tasks"
             className="bg-[#efe6fd] hover:bg-white px-4 py-2 rounded font-bold"
           />
@@ -71,20 +82,16 @@ const Dashboard = () => {
             <ul className="flex flex-wrap gap-2 sm:gap-4 justify-start w-full">
               {[...tasks]
                 .sort((a, b) => {
-                  // First sort by status order
                   const statusDiff =
                     statusOrder[a.status as keyof typeof statusOrder] -
                     statusOrder[b.status as keyof typeof statusOrder];
 
-                  // If status is the same (statusDiff === 0), sort by updated_at
                   if (statusDiff === 0) {
-                    // Compare updated_at dates, most recent first
                     return (b.updated_at || "").localeCompare(
                       a.updated_at || ""
                     );
                   }
 
-                  // Otherwise return the status difference
                   return statusDiff;
                 })
                 .map((task) => (
@@ -95,7 +102,7 @@ const Dashboard = () => {
                     <TaskComponent
                       task={task}
                       handleTask={handleTask}
-                      handleFetch={handleFetch}
+                      handleFetch={fetchTasks} // Pass fetchTasks to child components
                     />
                   </li>
                 ))}

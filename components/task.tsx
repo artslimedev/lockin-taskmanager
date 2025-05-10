@@ -85,27 +85,31 @@ const Task = ({ task, handleTask, handleFetch }: Props) => {
 
   return (
     <div
-      className={`flex h-50 w-full bg-[#efe6fd] ${
+      className={`flex h-48 w-full bg-[#efe6fd] ${
         !editCard && "hover:bg-white"
-      } p-2 sm:p-4 rounded-md`}
+      } p-2 rounded-md`}
     >
       {!editCard ? (
-        <div className="flex flex-col w-full justify-between">
+        <div className="flex flex-col gap-y-2 w-full p-0.5 ">
           <div className="flex w-full justify-between">
-            <span className="mb-2 font-bold text-lg">{editedTask.title}</span>
+            <span className="font-bold text-lg truncate max-w-[70%]">
+              {editedTask.title}
+            </span>
             <TaskStatus status={editedTask.status} />
           </div>
-          <p>{editedTask.description}</p>
-          <div className="flex w-full gap-x-2">
+          <p className="overflow-y-auto max-h-24 break-words text-sm">
+            {editedTask.description}
+          </p>
+          <div className="flex w-full gap-x-1.5 mt-auto">
             <Button
               name="Edit"
               onClick={toggleEdit}
-              className="px-2 py-2 min-w-[72px] w-1/4 bg-blue-500 hover:bg-blue-600 text-white rounded"
+              className="flex justify-center items-center px-2 py-0.5 min-w-[48px] w-[25%] bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm"
             />
             <Button
               name="Delete"
               onClick={handleDelete}
-              className="flex justify-center items-center px-2 py-2 min-w-[72px] w-1/4 bg-red-700 hover:bg-red-800 text-white rounded"
+              className="flex justify-center items-center px-2 py-0.5 min-w-[48px] w-[25%] bg-red-700 hover:bg-red-800 text-white rounded-lg text-sm"
               loading={isLoading}
             />
           </div>

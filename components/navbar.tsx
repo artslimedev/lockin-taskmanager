@@ -1,12 +1,17 @@
 "use client";
 import React from "react";
 import Button from "./button";
+import Link from "next/link";
 
 const Navbar = () => {
   return (
     <div className="sticky top-0 z-50 bg-white flex justify-between items-center py-2 px-4 h-12">
       <div>
-        <p className="text-2xl font-bold">Slime Guild</p>
+        <Link href={"/"}>
+          <p className="text-2xl font-bold">
+            <span className="font-normal font-mono">LOCK</span>IN
+          </p>
+        </Link>
       </div>
       {/* <div className="flex gap-2 text-white">
         <Button

@@ -1,5 +1,4 @@
-import { supabase } from "./lib/supabase";
-import { redirect } from "next/navigation";
+import { getSupabaseClient } from "./lib/supabase";
 
 type Task = {
   id?: number;
@@ -12,17 +11,19 @@ type Task = {
 };
 
 export async function signUpNewUser(userEmail: string, pw: string) {
+  const supabase = await getSupabaseClient();
+
+  if (!supabase) {
+    throw new Error("Failed to initialize Supabase client");
+  }
+
   try {
     const { data, error } = await supabase.auth.signUp({
-      email: `${userEmail}`,
-      password: `${pw}`,
-      options: {
-        emailRedirectTo: "https://localhost:3000/dashboard",
-      },
+      email: userEmail,
+      password: pw,
     });
     console.log("data", data);
     console.log("error", error);
-    // await redirect("/dashboard");
   } catch (error) {
     console.log(error);
   }
@@ -32,6 +33,13 @@ export const getTasks = async (): Promise<{
   data: Task[] | null;
   error: Error | null;
 }> => {
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    return {
+      data: null,
+      error: new Error("Failed to initialize Supabase client"),
+    };
+  }
   const { data, error } = await supabase.from("tasks").select("*");
 
   if (error) {
@@ -42,25 +50,11 @@ export const getTasks = async (): Promise<{
   return { data, error: null };
 };
 
-// export const getTask = async (
-//   id: number | undefined
-// ): Promise<{
-//   data: Task | null;
-//   error: Error | null;
-// }> => {
-//   const { data, error } = await supabase.from("tasks").select().eq("id", id);
-
-//   if (error) {
-//     console.error("Error fetching tasks:", error);
-//     return { data: null, error };
-//   }
-
-//   console.log("Fetched tasks:", data);
-
-//   return { data, error: null };
-// };
-
 export const createTask = async (task: Task) => {
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    return { error: new Error("Failed to initialize Supabase client") };
+  }
   const { error } = await supabase.from("tasks").insert({
     title: task.title,
     description: task.description,
@@ -80,6 +74,13 @@ export const editTask = async (
   data: Task | null;
   error: Error | null;
 }> => {
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    return {
+      data: null,
+      error: new Error("Failed to initialize Supabase client"),
+    };
+  }
   try {
     const { data, error } = await supabase
       .from("tasks")
@@ -110,14 +111,20 @@ export const deleteTask = async (
   data: Task | null;
   error: Error | null;
 }> => {
+  const supabase = await getSupabaseClient();
+  if (!supabase) {
+    return {
+      data: null,
+      error: new Error("Failed to initialize Supabase client"),
+    };
+  }
   const { data, error } = await supabase.from("tasks").delete().eq("id", id);
 
   if (error) {
-    console.error("Error fetching tasks:", error);
+    console.error("Error deleting task:", error);
     return { data: null, error };
   }
 
-  console.log("Fetched tasks:", data);
-
+  console.log("Task deleted successfully");
   return { data, error: null };
 };

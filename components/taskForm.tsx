@@ -67,7 +67,7 @@ const TaskForm = (props: Props) => {
           placeholder="Task Title"
         />
         <textarea
-          className="border-1 rounded p-1 h-[76px]"
+          className="border-1 rounded p-1 h-[136px]"
           name="description"
           value={formValues.description}
           onChange={handleChange}

@@ -49,7 +49,7 @@ const CardForm = ({
           value={editedTask.description}
           onChange={handleChange}
           placeholder="Description"
-          className="border rounded-sm p-1 text-[12px]"
+          className="border rounded-sm p-1 text-[12px] max-h-24 min-h-[96px] resize-none overflow-y-auto"
         />
       </div>
       <div className="flex gap-2">

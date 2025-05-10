@@ -20,32 +20,6 @@ export default function Home() {
             </p>
           </div>
           <div className="h-full w-full bg-white p-4 pt-8 md:p-12 rounded-t-2xl">
-            {/* <form className="flex flex-col gap-4">
-              <input
-                type="text"
-                placeholder="Email"
-                className="border w-full h-10 bg-gray-100 rounded p-2"
-              />
-              <input
-                type="text"
-                placeholder="Password"
-                className="border w-full h-10 bg-gray-100 rounded p-2"
-              />
-              <div className="flex gap-4 w-full ">
-                <button
-                  type="button"
-                  className="bg-gray-100 hover:bg-indigo-400 text-black w-1/2 rounded py-2"
-                >
-                  Login
-                </button>
-                <button
-                  type="button"
-                  className="bg-gray-100 hover:bg-indigo-400 text-black w-1/2 rounded py-2"
-                >
-                  Signup
-                </button>
-              </div>
-            </form> */}
             <AuthForm />
             <div className="flex w-full flex-1/3 gap-x-1.5 items-center mt-8">
               <div className="bg-black h-0.5 w-full"></div>
