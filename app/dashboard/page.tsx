@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { getSupabaseClient } from "@/lib/supabase"; // Your updated supabase client import
-import Button from "@/components/button"; // Button component
-import TaskComponent from "@/components/task"; // Task component
-import { Task } from "@/types"; // Task type
+import { createClient } from "@/utils/supabase/client";
+import Button from "@/components/button";
+import TaskComponent from "@/components/task";
+import { Task } from "@/types";
 import TaskForm from "@/components/taskForm";
+import { User } from "@supabase/supabase-js";
 
 const statusOrder = {
   Open: 0,
@@ -13,28 +14,37 @@ const statusOrder = {
 };
 
 const Dashboard = () => {
+  const [userInfo, setUserInfo] = useState<User | null>(null);
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [taskForm, setTaskForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchTasks = async () => {
     try {
-      const supabase = getSupabaseClient(); // Get the Supabase client
+      const supabase = await createClient();
 
-      // Check if supabase is initialized on the client side
       if (!supabase) {
         console.error("Supabase client is not initialized!");
         return;
       }
 
-      const { data, error } = await supabase.from("tasks").select("*"); // Fetch tasks
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("User not authenticated");
+      const { id } = user;
+
+      const { data, error } = await supabase
+        .from("tasks")
+        .select("*")
+        .eq("userId", id);
 
       if (error) {
         console.error("Error fetching tasks:", error);
         return;
       }
-
-      setTasks(data as Task[]); // Set tasks state with the fetched data
+      setUserInfo(user);
+      setTasks(data as Task[]);
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
@@ -46,12 +56,12 @@ const Dashboard = () => {
 
   const handleTask = async () => {
     setIsEditing(!isEditing);
-    await fetchTasks(); // Refetch tasks after editing
+    await fetchTasks();
   };
 
   useEffect(() => {
-    fetchTasks(); // Call fetchTasks on component mount
-  }, [taskForm, isEditing]); // Dependency array includes taskForm and isEditing
+    fetchTasks();
+  }, [taskForm, isEditing]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-48px)] py-4 px-2 sm:px-4 min-w-[280px] bg-indigo-900">
@@ -59,7 +69,7 @@ const Dashboard = () => {
       <div className="flex gap-4 mb-10">
         {!taskForm && (
           <Button
-            onClick={fetchTasks} // Button to refetch tasks
+            onClick={fetchTasks}
             name="Fetch Tasks"
             className="bg-[#efe6fd] hover:bg-white px-4 py-2 rounded font-bold"
           />
@@ -102,16 +112,20 @@ const Dashboard = () => {
                     <TaskComponent
                       task={task}
                       handleTask={handleTask}
-                      handleFetch={fetchTasks} // Pass fetchTasks to child components
+                      handleFetch={fetchTasks}
                     />
                   </li>
                 ))}
             </ul>
           )}
         </div>
-      ) : (
-        <TaskForm formTitle="Add Task" handleTaskForm={handleTaskForm} />
-      )}
+      ) : userInfo ? (
+        <TaskForm
+          formTitle="Add Task"
+          handleTaskForm={handleTaskForm}
+          userInfo={userInfo}
+        />
+      ) : null}
     </div>
   );
 };

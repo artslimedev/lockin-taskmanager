@@ -1,13 +1,26 @@
-// lib/supabase.ts
-import { createClient } from "@supabase/supabase-js"; // Client-side supabase
+"use server";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 
-// Create and return the Supabase client instance for Client-side
-export const getSupabaseClient = () => {
-  if (typeof window !== "undefined") {
-    return createClient(
-      process.env.NEXT_PUBLIC_DB_URL!,
-      process.env.NEXT_PUBLIC_DB_ANON_KEY!
-    );
-  }
-  return null;
-};
+export async function createClient() {
+  const cookieStore = await cookies();
+
+  return createServerClient(
+    process.env.NEXT_PUBLIC_DB_URL!,
+    process.env.NEXT_PUBLIC_DB_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll(cookiesToSet) {
+          try {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              cookieStore.set(name, value, options)
+            );
+          } catch {}
+        },
+      },
+    }
+  );
+}

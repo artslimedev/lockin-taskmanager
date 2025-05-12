@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { createTask } from "@/server";
 import { Status, Task } from "@/types";
@@ -6,15 +7,19 @@ type Props = {
   formTitle?: string;
   task?: Task;
   isEditing?: boolean;
+  userInfo: {
+    id: string;
+  };
   handleTaskForm: () => void;
 };
 
 const TaskForm = (props: Props) => {
-  const { formTitle, isEditing, handleTaskForm } = props;
+  const { formTitle, isEditing, handleTaskForm, userInfo } = props;
   const [formValues, setFormValues] = useState<Task>({
     title: "",
     description: "",
     status: "Open",
+    userId: userInfo.id,
   });
 
   const handleChange = (
@@ -38,6 +43,7 @@ const TaskForm = (props: Props) => {
         title: formValues.title,
         description: formValues.description,
         status: formValues.status,
+        userId: userInfo.id,
       });
     }
     setFormValues({
@@ -74,7 +80,7 @@ const TaskForm = (props: Props) => {
           placeholder="Description"
         />
         <select
-          name="status" // Add this
+          name="status"
           value={formValues.status}
           onChange={handleChange}
           className="border-1 rounded p-1"

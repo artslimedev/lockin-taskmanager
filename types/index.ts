@@ -9,3 +9,9 @@ export interface Task {
   updated_at?: string;
   userId?: string;
 }
+
+export interface User {
+  id?: string;
+  displayName?: string;
+  email?: string;
+}

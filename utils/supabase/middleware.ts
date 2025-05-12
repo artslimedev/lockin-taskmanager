@@ -35,17 +35,21 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
-  // const {
-  //   data: { user },
-  // } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // if (user && request.nextUrl.pathname.startsWith("/auth")) {
-  //   return NextResponse.redirect("/dashboard");
-  // }
+  const pathname = request.nextUrl.pathname;
 
-  // if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
-  //   return NextResponse.redirect("/auth/login");
-  // }
+  if (user && pathname === "/") {
+    console.log("redirecting to /dashboard");
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (!user && pathname.startsWith("/dashboard")) {
+    const url = new URL("/", request.url);
+    return NextResponse.redirect(url.toString());
+  }
 
   // protected routes
 
@@ -72,6 +76,5 @@ export async function updateSession(request: NextRequest) {
   //    return myNewResponse
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
-
   return supabaseResponse;
 }

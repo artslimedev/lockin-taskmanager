@@ -1,4 +1,4 @@
-import { getSupabaseClient } from "./lib/supabase";
+import { createClient } from "./utils/supabase/client";
 
 type Task = {
   id?: number;
@@ -11,7 +11,7 @@ type Task = {
 };
 
 export async function signUpNewUser(userEmail: string, pw: string) {
-  const supabase = await getSupabaseClient();
+  const supabase = await createClient();
 
   if (!supabase) {
     throw new Error("Failed to initialize Supabase client");
@@ -22,8 +22,8 @@ export async function signUpNewUser(userEmail: string, pw: string) {
       email: userEmail,
       password: pw,
     });
-    console.log("data", data);
-    console.log("error", error);
+    console.log("signup new user server.ts data", data);
+    console.log("signup new user server.ts error", error);
   } catch (error) {
     console.log(error);
   }
@@ -33,7 +33,7 @@ export const getTasks = async (): Promise<{
   data: Task[] | null;
   error: Error | null;
 }> => {
-  const supabase = await getSupabaseClient();
+  const supabase = await createClient();
   if (!supabase) {
     return {
       data: null,
@@ -51,7 +51,7 @@ export const getTasks = async (): Promise<{
 };
 
 export const createTask = async (task: Task) => {
-  const supabase = await getSupabaseClient();
+  const supabase = await createClient();
   if (!supabase) {
     return { error: new Error("Failed to initialize Supabase client") };
   }
@@ -74,7 +74,7 @@ export const editTask = async (
   data: Task | null;
   error: Error | null;
 }> => {
-  const supabase = await getSupabaseClient();
+  const supabase = await createClient();
   if (!supabase) {
     return {
       data: null,
@@ -111,7 +111,7 @@ export const deleteTask = async (
   data: Task | null;
   error: Error | null;
 }> => {
-  const supabase = await getSupabaseClient();
+  const supabase = await createClient();
   if (!supabase) {
     return {
       data: null,

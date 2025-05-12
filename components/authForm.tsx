@@ -1,14 +1,25 @@
+"use client";
+import { signup } from "@/app/action";
 import React, { useState } from "react";
-import { signUpNewUser } from "@/server";
-import { redirect } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
+
+type FormValues = {
+  signupEmail?: string;
+  signupPassword?: string;
+  confirmPassword?: string;
+  loginEmail?: string;
+  loginPassword?: string;
+};
 
 const AuthForm = () => {
+  const router = useRouter();
   const [signUp, setSignUp] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm({
     defaultValues: {
       signupEmail: "",
@@ -18,39 +29,29 @@ const AuthForm = () => {
       loginPassword: "",
     },
     mode: "onChange",
-  });
-  const [authVal, setAuthVals] = useState({
-    email: "",
-    password: "",
+    shouldUnregister: true,
   });
 
-  console.log(errors);
-
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = e.target;
-    setAuthVals((prevState) => ({ ...prevState, [name]: value }));
+  const onSignUp: SubmitHandler<FormValues> = async (form) => {
+    const { signupEmail, signupPassword } = form;
+    try {
+      const { user, session } = await signup({
+        email: signupEmail ?? "",
+        password: signupPassword ?? "",
+      });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      router.refresh();
+    } catch (error) {
+      console.log("onSubmit error:", error);
+    }
   };
-
-  // const handleSignUp = async () => {
-  //   const res = await signUpNewUser(authVal.email, authVal.password);
-
-  //   await redirect("/dashboard");
-
-  //   console.log(res);
-  // };
 
   return (
     <div>
       {!signUp && (
         <form
           className="flex flex-col gap-4"
-          onSubmit={handleSubmit((data) => {
-            console.log(data);
-          })}
+          onSubmit={(data) => console.log("login form data:", data)}
         >
           <div>
             <input
@@ -58,7 +59,6 @@ const AuthForm = () => {
               type="text"
               placeholder="Email"
               className=" w-full h-10 bg-gray-300 rounded p-2"
-              onChange={handleChange}
             />
             <p className="text-red-600 font-light text-[12px] mt-1">
               {errors.loginEmail && errors.loginEmail?.message}
@@ -73,10 +73,10 @@ const AuthForm = () => {
                   message: "Min length is 6",
                 },
               })}
-              type="text"
+              type="password"
               placeholder="Password"
               className=" w-full h-10 bg-gray-300 rounded p-2"
-              onChange={handleChange}
+              autoComplete="current-password"
             />
             <p className="text-red-600 font-light text-[12px] mt-1">
               {errors.loginPassword && errors.loginPassword?.message}
@@ -100,19 +100,13 @@ const AuthForm = () => {
         </form>
       )}
       {signUp && (
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={handleSubmit((data) => {
-            console.log(data);
-          })}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSignUp)}>
           <div>
             <input
               {...register("signupEmail", { required: "This is required." })}
               type="text"
               placeholder="Email"
               className=" w-full h-10 bg-gray-300 rounded p-2"
-              onChange={handleChange}
             />
             <p className="text-red-600 font-light text-[12px] mt-1">
               {errors.signupEmail && errors.signupEmail?.message}
@@ -127,10 +121,9 @@ const AuthForm = () => {
                   message: "Min length is 6",
                 },
               })}
-              type="text"
+              type="password"
               placeholder="Password"
               className=" w-full h-10 bg-gray-300 rounded p-2"
-              onChange={handleChange}
             />
             <p className="text-red-600 font-light text-[12px] mt-1">
               {errors.signupPassword && errors.signupPassword?.message}
@@ -144,11 +137,13 @@ const AuthForm = () => {
                   value: 6,
                   message: "Min length is 6",
                 },
+                validate: (value) =>
+                  value === getValues().signupPassword ||
+                  "Passwords do not match",
               })}
-              type="text"
+              type="password"
               placeholder="Confirm Password"
               className=" w-full h-10 bg-gray-300 rounded p-2"
-              onChange={handleChange}
             />
             <p className="text-red-600 font-light text-[12px] mt-1">
               {errors.confirmPassword && errors.confirmPassword?.message}
