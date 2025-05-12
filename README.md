@@ -108,6 +108,10 @@ A full-stack task management application built with **Next.js** and **Supabase**
 └── ...
 ```
 
+## 📷 Screenshots
+
+[![Landing Page](<public/Landing Page.png>)]
+
 ## 🔐 Authentication
 
 This application uses Supabase Auth for user authentication. Users can sign up and log in using email and password. Authentication state is managed on the client side, and protected routes ensure that only authenticated users can access certain pages.

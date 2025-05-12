@@ -61,7 +61,8 @@ const AuthForm = () => {
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-y-4">
+      <h2 className="text-2xl font-bold">{signUp ? "Sign Up" : "Login"}</h2>
       {!signUp && (
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onLogin)}>
           <div>
