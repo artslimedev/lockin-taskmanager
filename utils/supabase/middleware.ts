@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { useRouter } from "next/navigation";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -48,6 +49,7 @@ export async function updateSession(request: NextRequest) {
 
   if (!user && pathname.startsWith("/dashboard")) {
     const url = new URL("/", request.url);
+
     return NextResponse.redirect(url.toString());
   }
 

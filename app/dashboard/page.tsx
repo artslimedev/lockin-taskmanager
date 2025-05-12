@@ -19,6 +19,8 @@ const Dashboard = () => {
   const [taskForm, setTaskForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  console.log(userInfo);
+
   const fetchTasks = async () => {
     try {
       const supabase = await createClient();

@@ -1,5 +1,5 @@
 "use client";
-import { signup } from "@/app/action";
+import { signup, login } from "@/app/action";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler, SubmitErrorHandler } from "react-hook-form";
@@ -46,13 +46,24 @@ const AuthForm = () => {
     }
   };
 
+  const onLogin: SubmitHandler<FormValues> = async (form) => {
+    const { loginEmail, loginPassword } = form;
+    try {
+      await login({
+        email: loginEmail ?? "",
+        password: loginPassword ?? "",
+      });
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      router.refresh();
+    } catch (error) {
+      console.log("onSubmit error:", error);
+    }
+  };
+
   return (
     <div>
       {!signUp && (
-        <form
-          className="flex flex-col gap-4"
-          onSubmit={(data) => console.log("login form data:", data)}
-        >
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onLogin)}>
           <div>
             <input
               {...register("loginEmail", { required: "This is required." })}

@@ -24,3 +24,30 @@ export async function signup({
 
   return { user, session };
 }
+
+export async function login({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
+  const supabase = await createClient();
+
+  if (!supabase) {
+    throw new Error("Failed to initialize Supabase client");
+  }
+
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  const { user, session } = data;
+
+  if (error || !session) {
+    console.error("Login error:", error);
+    redirect("/error");
+  }
+
+  return { user, session };
+}
