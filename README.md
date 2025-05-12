@@ -1,4 +1,4 @@
-# 📝 taskscrud
+# 📝 Lock In Task Manager
 
 A full-stack task management application built with **Next.js** and **Supabase** (PostgreSQL). This project allows users to perform Create, Read, Update, and Delete (CRUD) operations on tasks, leveraging Supabase for backend services and Next.js for the frontend.
 
@@ -16,6 +16,10 @@ A full-stack task management application built with **Next.js** and **Supabase**
 - **Backend**: [Supabase](https://supabase.com/) (PostgreSQL)
 - **Authentication**: Supabase Auth
 - **Styling**: Tailwind CSS
+
+## 📷 Screenshots
+
+![Landing Page](<public/Landing Page.png>)
 
 ## 📦 Getting Started
 
@@ -107,10 +111,6 @@ A full-stack task management application built with **Next.js** and **Supabase**
 ├── tailwind.config.js# Tailwind CSS configuration
 └── ...
 ```
-
-## 📷 Screenshots
-
-![Landing Page](<public/Landing Page.png>)
 
 ## 🔐 Authentication
 
