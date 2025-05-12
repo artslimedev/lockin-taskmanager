@@ -110,7 +110,7 @@ A full-stack task management application built with **Next.js** and **Supabase**
 
 ## 📷 Screenshots
 
-[![Landing Page](<public/Landing Page.png>)]
+[Landing Page](<public/Landing Page.png>)
 
 ## 🔐 Authentication
 
