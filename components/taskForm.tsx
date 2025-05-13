@@ -56,7 +56,7 @@ const TaskForm = (props: Props) => {
   };
 
   return (
-    <div className="bg-[#efe6fd] hover:bg-white active:bg-white w-[400px] h-3/5 rounded p-4">
+    <div className="bg-[#efe6fd] hover:bg-white active:bg-white w-full max-w-[400px] h-3/5 rounded p-4 overflow-hidden">
       <h2 className="text-2xl font-bold mb-2">{formTitle || ""}</h2>
       <form
         id="taskForm"
