@@ -7,7 +7,6 @@ import Button from "@/components/button";
 import TaskComponent from "@/components/task";
 import { Task } from "@/types";
 import TaskForm from "@/components/taskForm";
-import { User } from "@supabase/supabase-js";
 
 const statusOrder = {
   Open: 0,
@@ -16,7 +15,6 @@ const statusOrder = {
 };
 
 const Dashboard = () => {
-  // Use context to access the current user
   const { currentUser, loading, error } = useAuthContext();
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [taskForm, setTaskForm] = useState(false);
@@ -39,7 +37,7 @@ const Dashboard = () => {
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
-        .eq("userId", currentUser.id); // Use currentUser from context
+        .eq("userId", currentUser.id);
 
       if (error) {
         console.error("Error fetching tasks:", error);
@@ -65,14 +63,14 @@ const Dashboard = () => {
     if (currentUser) {
       fetchTasks();
     }
-  }, [currentUser, taskForm, isEditing]); // Dependency on currentUser
+  }, [currentUser, taskForm, isEditing]);
 
   if (loading) {
-    return <div>Loading...</div>; // Loading state while waiting for user context
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>; // Handle any errors
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -137,7 +135,7 @@ const Dashboard = () => {
           <TaskForm
             formTitle="Add Task"
             handleTaskForm={handleTaskForm}
-            userInfo={currentUser} // Pass the currentUser from context
+            userInfo={currentUser}
           />
         ) : null}
       </div>
