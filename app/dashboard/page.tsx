@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useAuthContext } from "@/context/UserContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -20,7 +20,7 @@ const Dashboard = () => {
   const [taskForm, setTaskForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     if (!currentUser) {
       console.error("User not authenticated");
       return;
@@ -48,7 +48,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }
-  };
+  }, [currentUser]);
 
   const handleTaskForm = () => {
     setTaskForm(!taskForm);
@@ -63,7 +63,7 @@ const Dashboard = () => {
     if (currentUser) {
       fetchTasks();
     }
-  }, [currentUser, taskForm, isEditing, tasks]);
+  }, [currentUser, taskForm, isEditing, fetchTasks]);
 
   if (loading) {
     return <div>Loading...</div>;
