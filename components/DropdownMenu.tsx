@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Avatar from "./Avatar";
 
 const DropdownMenu = () => {
-  const [userMenu, setUserMenu] = useState(false);
+  // const [userMenu, setUserMenu] = useState(false);
   return (
     <div>
       <button>

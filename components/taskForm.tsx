@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { createTask } from "@/server";
-import { Status, Task } from "@/types";
+import { Task } from "@/types";
 
 type Props = {
   formTitle?: string;

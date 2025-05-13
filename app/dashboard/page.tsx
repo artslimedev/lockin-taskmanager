@@ -63,7 +63,7 @@ const Dashboard = () => {
     if (currentUser) {
       fetchTasks();
     }
-  }, [currentUser, taskForm, isEditing]);
+  }, [currentUser, taskForm, isEditing, tasks]);
 
   if (loading) {
     return <div>Loading...</div>;
