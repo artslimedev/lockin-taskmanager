@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { useAuthContext } from "@/context/UserContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import Button from "@/components/button";
 import TaskComponent from "@/components/task";
@@ -15,12 +16,18 @@ const statusOrder = {
 };
 
 const Dashboard = () => {
-  const [userInfo, setUserInfo] = useState<User | null>(null);
+  // Use context to access the current user
+  const { currentUser, loading, error } = useAuthContext();
   const [tasks, setTasks] = useState<Task[] | null>([]);
   const [taskForm, setTaskForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
   const fetchTasks = async () => {
+    if (!currentUser) {
+      console.error("User not authenticated");
+      return;
+    }
+
     try {
       const supabase = await createClient();
 
@@ -29,22 +36,16 @@ const Dashboard = () => {
         return;
       }
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) throw new Error("User not authenticated");
-      const { id } = user;
-
       const { data, error } = await supabase
         .from("tasks")
         .select("*")
-        .eq("userId", id);
+        .eq("userId", currentUser.id); // Use currentUser from context
 
       if (error) {
         console.error("Error fetching tasks:", error);
         return;
       }
-      setUserInfo(user);
+
       setTasks(data as Task[]);
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -61,8 +62,18 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchTasks();
-  }, [taskForm, isEditing]);
+    if (currentUser) {
+      fetchTasks();
+    }
+  }, [currentUser, taskForm, isEditing]); // Dependency on currentUser
+
+  if (loading) {
+    return <div>Loading...</div>; // Loading state while waiting for user context
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>; // Handle any errors
+  }
 
   return (
     <ProtectedRoute>
@@ -122,11 +133,11 @@ const Dashboard = () => {
               </ul>
             )}
           </div>
-        ) : userInfo ? (
+        ) : currentUser ? (
           <TaskForm
             formTitle="Add Task"
             handleTaskForm={handleTaskForm}
-            userInfo={userInfo}
+            userInfo={currentUser} // Pass the currentUser from context
           />
         ) : null}
       </div>
