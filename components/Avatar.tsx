@@ -3,12 +3,13 @@ import React from "react";
 
 const Avatar = () => {
   return (
-    <div className="rounded-full h-8 w-8 hover:h-10 hover:w-10">
+    <div>
       <Image
-        src="https://avatar.vercel.sh/59283.png"
+        src="public/avatar.png"
         height={32}
         width={32}
         alt="avatar"
+        className="rounded-full h-8 w-8 hover:h-10 hover:w-10"
       />
     </div>
   );
