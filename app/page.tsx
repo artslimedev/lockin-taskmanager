@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import hero from "../public/hero.jpg";
 import AuthForm from "@/components/authForm";
 
@@ -22,7 +21,7 @@ export default function Home() {
             </div>
           </div>
           <div className="h-full w-full bg-white p-4 pt-8 md:p-12 md:pt-8 rounded-t-2xl">
-            <AuthForm />
+            <AuthForm id="auth-form" />
             <div className="flex w-full flex-1/3 gap-x-1.5 items-center mt-8">
               <div className="bg-black h-0.5 w-full"></div>
               <span>Or</span>

@@ -54,9 +54,25 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, []);
 
-  // 🔁 Fetch once when the provider mounts
   useEffect(() => {
+    const supabase = createClient();
+
     fetchUserInfo();
+
+    // Subscribe to auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        // Small delay to let router.push() or page navigation finish first
+        setTimeout(() => {
+          setCurrentSession(session);
+          setCurrentUser(session?.user ?? null);
+        }, 300);
+      }
+    );
+
+    return () => {
+      listener.subscription.unsubscribe();
+    };
   }, [fetchUserInfo]);
 
   return (
@@ -66,7 +82,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
         currentSession,
         loading,
         error,
-        refetchUser: fetchUserInfo, // exposed to manually refetch if needed
+        refetchUser: fetchUserInfo,
       }}
     >
       {children}

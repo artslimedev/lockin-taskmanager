@@ -88,6 +88,7 @@ const Task = ({ task, handleTask, handleFetch }: Props) => {
       className={`flex h-48 w-full bg-[#efe6fd] ${
         !editCard && "hover:bg-white"
       } p-2 rounded-md`}
+      data-testid="task"
     >
       {!editCard ? (
         <div className="flex flex-col gap-y-2 w-full p-0.5 ">

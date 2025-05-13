@@ -15,6 +15,7 @@ A full-stack task management application built with **Next.js** and **Supabase**
 - **Frontend**: [Next.js](https://nextjs.org/)
 - **Backend**: [Supabase](https://supabase.com/) (PostgreSQL)
 - **Authentication**: Supabase Auth
+- **Testing**: Jest, React-Testing-Library
 - **Styling**: Tailwind CSS
 
 ## 📷 Screenshots
