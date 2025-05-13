@@ -1,10 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuthContext } from "@/context/UserContext";
-import Avatar from "./Avatar";
+// import Avatar from "./Avatar";
 
 const Navbar = () => {
   const { currentSession, loading } = useAuthContext();
@@ -14,18 +14,22 @@ const Navbar = () => {
 
   const handleLogOut = async () => {
     setIsLoggingOut(true);
-    console.log("Trying to logout...");
     const { error } = await supabase.auth.signOut();
-
-    setIsLoggingOut(false);
     if (error) {
       console.error("Logout failed:", error.message);
       setIsLoggingOut(false);
       return;
     }
 
-    router.push("/");
+    await router.push("/");
+    setIsLoggingOut(false);
   };
+
+  useEffect(() => {
+    if (!currentSession && !loading) {
+      router.push("/");
+    }
+  }, [currentSession, loading, router]);
 
   if (loading) {
     return (
@@ -48,7 +52,7 @@ const Navbar = () => {
       </div>
       {currentSession && (
         <div className="flex justify-center items-center gap-4">
-          <Avatar />
+          {/* <Avatar /> */}
           <button
             onClick={handleLogOut}
             type="button"

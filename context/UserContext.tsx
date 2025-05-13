@@ -31,18 +31,14 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(true);
       const supabase = await createClient();
       const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
-      const {
         data: { session },
-        error: sessionError,
+        error,
       } = await supabase.auth.getSession();
 
       if (error) throw error;
 
       setCurrentSession(session);
-      setCurrentUser(user);
+      setCurrentUser(session?.user ?? null); // <- cleaner
       setError(null);
     } catch (err: any) {
       console.error("Failed to fetch user", err.message);
@@ -63,10 +59,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         // Small delay to let router.push() or page navigation finish first
-        setTimeout(() => {
-          setCurrentSession(session);
-          setCurrentUser(session?.user ?? null);
-        }, 300);
+        setCurrentSession(session);
+        setCurrentUser(session?.user ?? null);
       }
     );
 
