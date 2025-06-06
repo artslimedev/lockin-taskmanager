@@ -1,12 +1,11 @@
 "use client";
-import hero from "../public/hero.jpg";
 import AuthForm from "@/components/authForm";
 
 export default function Home() {
   return (
     <div
       className="flex flex-col items-center bg-white w-full h-full bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url(${hero.src})` }}
+      style={{ backgroundImage: `url('/hero.jpg')` }}
     >
       <div className="flex items-center w-full h-full justify-end">
         <div className="flex flex-col  w-full md:min-w-[480px] md:w-1/3 h-full gap-8 bg-indigo-900 md:px-8  pt-4">
