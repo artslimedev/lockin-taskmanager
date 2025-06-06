@@ -21,6 +21,7 @@ const AuthForm = (props: Props) => {
   const router = useRouter();
   const [signUp, setSignUp] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -62,16 +63,21 @@ const AuthForm = (props: Props) => {
     const { loginEmail, loginPassword } = form;
     try {
       setIsSubmitting(true);
-      const { user, session } = await loginWithPass(
-        loginEmail ?? "",
-        loginPassword ?? ""
-      );
 
-      if (user && session) {
-        router.push("/dashboard");
+      if (!loginEmail || !loginPassword) {
+        throw new Error("Email and password are required");
       }
+
+      const response = await loginWithPass(loginEmail, loginPassword);
+
+      if (!response || !response.user || !response.session) {
+        throw new Error("Invalid login response");
+      }
+
+      router.push("/dashboard");
     } catch (error) {
-      console.log("Login error:", error);
+      console.error("Login error:", error);
+      setError(error instanceof Error ? error.message : "Login failed");
     } finally {
       setIsSubmitting(false);
     }
@@ -204,6 +210,11 @@ const AuthForm = (props: Props) => {
             </button>
           </div>
         </form>
+      )}
+      {error && (
+        <div className="text-red-500 text-sm mt-2" role="alert">
+          {error}
+        </div>
       )}
     </div>
   );
