@@ -1,5 +1,5 @@
 "use client";
-import { signup, login } from "@/app/action";
+import { loginWithPass, signupWithPass } from "@/lib/auth";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -43,10 +43,10 @@ const AuthForm = (props: Props) => {
     const { signupEmail, signupPassword } = form;
     try {
       setIsSubmitting(true);
-      const { user, session } = await signup({
-        email: signupEmail ?? "",
-        password: signupPassword ?? "",
-      });
+      const { user, session } = await signupWithPass(
+        signupEmail ?? "",
+        signupPassword ?? ""
+      );
 
       if (user && session) {
         router.push("/dashboard");
@@ -62,10 +62,10 @@ const AuthForm = (props: Props) => {
     const { loginEmail, loginPassword } = form;
     try {
       setIsSubmitting(true);
-      const { user, session } = await login({
-        email: loginEmail ?? "",
-        password: loginPassword ?? "",
-      });
+      const { user, session } = await loginWithPass(
+        loginEmail ?? "",
+        loginPassword ?? ""
+      );
 
       if (user && session) {
         router.push("/dashboard");
